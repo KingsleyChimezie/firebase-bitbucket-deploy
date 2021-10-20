@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "react-firebase-bitbucket-prod"
+  },
+  "targets": {
+    "react-firebase-bitbucket-prod": {
+      "hosting": {
+        "prod": [
+          "react-firebase-bitbucket-prod"
+        ],
+        "stage": [
+          "react-firebase-bitbucket-stage"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+image: node
+
+pipelines:
+  branches:
+    # STAGE
+    develop:
+      - step:
+          name: Test
+          script:
+            - npm install && npm test
+
+      - step:
+          name: Build
+          script:
+            - npm install && npm run build
+          artifacts:
+            - build/**
+
+      - step:
+          name: Deploy to Firebase (Staging)
+          deployment: staging
+          script:
+            - pipe: atlassian/firebase-deploy:1.0.0
+              variables:
+                FIREBASE_TOKEN: $FIREBASE_TOKEN
+                PROJECT_ID: $FIREBASE_PROJECT_ID
+                EXTRA_ARGS: '--only hosting:stage'
+                MULTI_SITES_CONFIG: >
+                  [{
+                    "TARGET": "stage",
+                    "RESOURCE": "react-firebase-bitbucket-stage"
+                  }]
+                DEBUG: 'false'
+
+    # PRODUCTION
+    '{master,main}':
+      - step:
+          name: Deploy to Firebase (Production)
+          deployment: production
+          script:
+            - pipe: atlassian/firebase-deploy:1.0.0
+              variables:
+                FIREBASE_TOKEN: $FIREBASE_TOKEN
+                PROJECT_ID: $FIREBASE_PROJECT_ID
+                EXTRA_ARGS: '--only hosting:prod'
+                MULTI_SITES_CONFIG: >
+                  [{
+                    "TARGET": "prod",
+                    "RESOURCE": "react-firebase-bitbucket-prod"
+                  }]
+                DEBUG: 'false'
